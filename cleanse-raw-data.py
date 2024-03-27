@@ -1,31 +1,32 @@
 #Raw data was downloaded from Seattle city open data project. Run script to convert data into usable json 
 
-import csv
-import json
-import time
-
-import pandas as pd
+import csv, sqlite3, time
 
 csvFilePath = r'Seattle_Parks_and_Recreation_Parks_Features.csv'
-jsonFilePath = r'park_features.json'
+
+con = sqlite3.connect("parks.db") # connect to database, will create if not exist
+cur = con.cursor()
+cur.execute("CREATE TABLE ParkFeatures (id INTEGER PRIMARY KEY AUTOINCREMENT, name, feature_desc, hours, xpos, ypos, location);")
+
+
+with open(csvFilePath, 'r') as fin:
+	dr = csv.DictReader(fin)
+	resultCount = len(dr)
+	to_db = [(i['Name'], i['Feature_Desc'], i['hours'], i['xPos'], i['yPos'], i['Location 1']) for i in dr]
 
 start = time.perf_counter()
 
-df = pd.read_csv(csvFilePath)
+cur.executemany("INSERT INTO ParkFeatures (name, feature_desc, hours, xpos, ypos, location) VALUES (?, ?, ?, ?, ?, ?);", to_db)
 
-# Remove unwanted columns from the data
-df = df.drop(columns=["PMAID", "Alt_Name", "Feature_ID", "CHILD_DESC","YOUTH_ONLY"])
+cur.execute("SELECT * FROM ParkFeatures");
+result = cur.fetchone()
+print(result)
 
-# Filter data by sporting features 
-filtered_df = df[df["Feature_Desc"].str.contains("Tennis|Soccer|Ball|rugby|pool|criket|boat|skate|track|golf", case=False)]
+con.commit()
+cur.close()
 
-# Convert to json
-jsonData = filtered_df.to_json(orient='records')
-
-with open(jsonFilePath, 'w', encoding='utf-8') as f:
-	json.dump(jsonData, f, ensure_ascii=False, indent=4)
 
 finish = time.perf_counter()
 
 
-print(f"Converted csv raw data to {len(filtered_df.index)} json rows successfully in {finish - start:0.4f} seconds")
+print(f"Converted csv raw data to {resultCount} json rows successfully in {finish - start:0.4f} seconds")
