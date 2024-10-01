@@ -3,10 +3,12 @@ import flask
 # import json
 import sqlite3
 from flask import request, jsonify
+from flask_cors import CORS
 
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+CORS(app, orgins=["http://localhost:3000"])
 
 def dict_factory(cursor, row):
     d = {}
