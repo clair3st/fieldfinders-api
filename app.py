@@ -8,7 +8,8 @@ from flask_cors import CORS
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
-CORS(app, orgins=["http://localhost:3000"])
+CORS(app, orgins="*")
+
 
 def dict_factory(cursor, row):
     d = {}
@@ -35,5 +36,5 @@ def page_not_found(e):
     return "404. The resource could not be found.", 404
 
 
-
-app.run()
+if __name__ == "__main__":
+    app.run(port=8000, debug=True)
