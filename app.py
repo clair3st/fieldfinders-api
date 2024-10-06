@@ -29,12 +29,13 @@ def api_all():
 	data = cur.execute('SELECT * FROM ParkFeatures;').fetchall()
 	return jsonify(data)
 
-@app.route('/api/v1/resources/features/cricket', methods=['GET'])
-def api_cricket():
+@app.route('/api/v1/resources/features/<feature>', methods=['GET'])
+def api_feature(feature):
+	print(feature)
 	conn = sqlite3.connect('parks.db')
 	conn.row_factory = dict_factory
 	cur = conn.cursor()
-	data = cur.execute("SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like 'cricket' group by xpos;").fetchall()
+	data = cur.execute(f"SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like '%{feature}%' group by xpos;").fetchall()
 	return jsonify(data)
 
 @app.errorhandler(404)
