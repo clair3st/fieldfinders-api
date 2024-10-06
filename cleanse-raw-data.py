@@ -6,25 +6,29 @@ csvFilePath = r'Seattle_Parks_and_Recreation_Parks_Features.csv'
 
 con = sqlite3.connect("parks.db") # connect to database, will create if not exist
 cur = con.cursor()
-cur.execute("CREATE TABLE ParkFeatures (id INTEGER PRIMARY KEY AUTOINCREMENT, name, feature_desc, hours, xpos, ypos, location);")
+sql = ("CREATE TABLE IF NOT EXISTS ParkFeatures ("
+		"id INTEGER PRIMARY KEY AUTOINCREMENT, "
+		"name TEXT,"
+		"feature_desc TEXT,"
+		"hours TEXT, "
+		"xpos REAL NOT NULL, "
+		"ypos REAL NOT NULL, "
+		"location TEXT);")
+
+
+cur.execute(sql)
 
 
 with open(csvFilePath, 'r') as fin:
 	dr = csv.DictReader(fin)
-	resultCount = len(dr)
-	to_db = [(i['Name'], i['Feature_Desc'], i['hours'], i['xPos'], i['yPos'], i['Location 1']) for i in dr]
+	to_db = [(i['Name'], i['Feature_Desc'], i['hours'], i['xPos'], i['yPos'], i['Location 1']) for i in dr if i['xPos']]
+	resultCount = len(to_db)
 
 start = time.perf_counter()
 
 cur.executemany("INSERT INTO ParkFeatures (name, feature_desc, hours, xpos, ypos, location) VALUES (?, ?, ?, ?, ?, ?);", to_db)
-
-cur.execute("SELECT * FROM ParkFeatures");
-result = cur.fetchone()
-print(result)
-
 con.commit()
 cur.close()
-
 
 finish = time.perf_counter()
 
