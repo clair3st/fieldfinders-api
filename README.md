@@ -18,4 +18,5 @@ This creates a database `ParkFeatures` in sqlite3 and inserts park features into
 `flask run`
 
 # Endpoint:
-`/api/v1/resources/features/all`
+`/api/v1/resources/features/all` lists all features from the city of seattle
+`/api/v1/resources/features/<feature>` allows to list by feature, only supports select list of sports
