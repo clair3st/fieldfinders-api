@@ -17,7 +17,7 @@ df = pd.read_csv(csvFilePath)
 df = df.drop(columns=["PMAID", "Alt_Name", "Feature_ID", "CHILD_DESC","YOUTH_ONLY"])
 
 # Filter data by sporting features 
-filtered_df = df[df["Feature_Desc"].str.contains("Tennis|Soccer|Ball|rugby|pool|criket|boat|skate|track|golf", case=False)]
+filtered_df = df[df["Feature_Desc"].str.contains("Tennis|Soccer|Ball|rugby|pool|cricket|boat|skate|track|golf", case=False)]
 
 # Convert to json
 jsonData = filtered_df.to_json(orient='records')
