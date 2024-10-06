@@ -23,12 +23,18 @@ def home():
 
 @app.route('/api/v1/resources/features/all', methods=['GET'])
 def api_all():
-	# with app.open_resource('park_features.json') as f:
-	# 	data = json.load(f)
 	conn = sqlite3.connect('parks.db')
 	conn.row_factory = dict_factory
 	cur = conn.cursor()
 	data = cur.execute('SELECT * FROM ParkFeatures;').fetchall()
+	return jsonify(data)
+
+@app.route('/api/v1/resources/features/cricket', methods=['GET'])
+def api_cricket():
+	conn = sqlite3.connect('parks.db')
+	conn.row_factory = dict_factory
+	cur = conn.cursor()
+	data = cur.execute("SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like 'cricket' group by xpos;").fetchall()
 	return jsonify(data)
 
 @app.errorhandler(404)
