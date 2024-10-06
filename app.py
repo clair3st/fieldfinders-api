@@ -32,11 +32,15 @@ def api_all():
 @app.route('/api/v1/resources/features/<feature>', methods=['GET'])
 def api_feature(feature):
 	print(feature)
-	conn = sqlite3.connect('parks.db')
-	conn.row_factory = dict_factory
-	cur = conn.cursor()
-	data = cur.execute(f"SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like '%{feature}%' group by xpos;").fetchall()
-	return jsonify(data)
+	allowedSports = ['cricket', 'tennis', 'rugby', 'soccer', 'pool', 'boat', 'skate', 'track', 'golf','t-ball', 'softball', 'basketball', 'baseball', 'football']
+	if (feature in allowedSports):
+		conn = sqlite3.connect('parks.db')
+		conn.row_factory = dict_factory
+		cur = conn.cursor()
+		data = cur.execute(f"SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like '%{feature}%' group by xpos;").fetchall()
+		return jsonify(data)
+	else:
+		return'No sporting features for '.feature
 
 @app.errorhandler(404)
 def page_not_found(e):
