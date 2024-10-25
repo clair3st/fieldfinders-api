@@ -1,15 +1,26 @@
 # Importing flask and creating a flask application get 
 import flask
-# import json
+import json
 import sqlite3
 from flask import request, jsonify
 from flask_cors import CORS
-
+from werkzeug.exceptions import HTTPException
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 CORS(app, orgins="*")
 
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    response = e.get_response()
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 def dict_factory(cursor, row):
     d = {}
@@ -31,16 +42,11 @@ def api_all():
 
 @app.route('/api/v1/resources/features/<feature>', methods=['GET'])
 def api_feature(feature):
-	print(feature)
-	allowedSports = ['cricket', 'tennis', 'rugby', 'soccer', 'pool', 'boat', 'skate', 'track', 'golf','t-ball', 'softball', 'basketball', 'baseball', 'football']
-	if (feature in allowedSports):
-		conn = sqlite3.connect('parks.db')
-		conn.row_factory = dict_factory
-		cur = conn.cursor()
-		data = cur.execute(f"SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like '%{feature}%' group by xpos;").fetchall()
-		return jsonify(data)
-	else:
-		return'No sporting features for '.feature
+	conn = sqlite3.connect('parks.db')
+	conn.row_factory = dict_factory
+	cur = conn.cursor()
+	data = cur.execute(f"SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like '%{feature}%' group by xpos;").fetchall()
+	return jsonify(data)
 
 @app.errorhandler(404)
 def page_not_found(e):
