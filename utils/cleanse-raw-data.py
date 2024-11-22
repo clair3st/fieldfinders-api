@@ -33,4 +33,4 @@ cur.close()
 finish = time.perf_counter()
 
 
-print(f"Converted csv raw data to {resultCount} json rows successfully in {finish - start:0.4f} seconds")
+print(f"Converted csv raw data to {resultCount} db rows successfully in {finish - start:0.4f} seconds")
