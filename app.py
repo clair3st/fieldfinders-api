@@ -1,10 +1,14 @@
 # Importing flask and creating a flask application get 
-import flask
-import json
-import sqlite3
+import flask, json, sqlite3, os
+from dotenv import load_dotenv
 from flask import request, jsonify
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
+
+load_dotenv()
+db_uri = os.environ.get("DB_URI")
+
+print(db_uri)
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -32,17 +36,17 @@ def dict_factory(cursor, row):
 def home():
 	return "Field Finders. This site is a prototype API for park facility data."
 
-@app.route('/api/v1/resources/features/all', methods=['GET'])
+@app.route('/features/all', methods=['GET'])
 def api_all():
-	conn = sqlite3.connect('parks.db')
+	conn = sqlite3.connect("parks.db")
 	conn.row_factory = dict_factory
 	cur = conn.cursor()
 	data = cur.execute('SELECT * FROM ParkFeatures;').fetchall()
 	return jsonify(data)
 
-@app.route('/api/v1/resources/features/<feature>', methods=['GET'])
+@app.route('/features/<feature>', methods=['GET'])
 def api_feature(feature):
-	conn = sqlite3.connect('parks.db')
+	conn = sqlite3.connect(db_uri)
 	conn.row_factory = dict_factory
 	cur = conn.cursor()
 	data = cur.execute(f"SELECT xpos, ypos, name, feature_desc, location, id, hours from ParkFeatures where feature_desc like '%{feature}%' group by xpos;").fetchall()
