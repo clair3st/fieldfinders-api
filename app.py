@@ -8,8 +8,6 @@ from werkzeug.exceptions import HTTPException
 load_dotenv()
 db_uri = os.environ.get("DB_URI")
 
-print(db_uri)
-
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 CORS(app, orgins="*")
@@ -38,7 +36,7 @@ def home():
 
 @app.route('/features/all', methods=['GET'])
 def api_all():
-	conn = sqlite3.connect("parks.db")
+	conn = sqlite3.connect(db_uri)
 	conn.row_factory = dict_factory
 	cur = conn.cursor()
 	data = cur.execute('SELECT * FROM ParkFeatures;').fetchall()
