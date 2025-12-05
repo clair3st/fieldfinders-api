@@ -5,6 +5,8 @@ following a tutorial found [here](https://nordicapis.com/how-to-create-an-api-fr
 
 Raw data was downloaded from Seattle city open data project.
 
+Deployed to pythonanywhere [here](https://clair3st.pythonanywhere.com/)
+
 # Setup:
 run:
 
